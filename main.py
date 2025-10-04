@@ -3,6 +3,7 @@ import random
 import math
 import physics
 from entities import CelestialBody
+from data import dict
 
 # Screen dimensions
 WIDTH, HEIGHT = 700, 700
