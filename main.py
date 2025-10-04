@@ -20,8 +20,8 @@ KMH_TO_PPF = 0.00003
 
 def main():
     nasa_asteroids = load_nasa_data()
-    print(json.dumps(nasa_asteroids, indent=4))
-    print(f"Total asteroids found: {len(nasa_asteroids)}")
+    #print(json.dumps(nasa_asteroids, indent=4))
+    #print(f"Total asteroids found: {len(nasa_asteroids)}")
     pygame.init()
     width, height = 800, 600
     screen = pygame.display.set_mode((width, height))
@@ -94,9 +94,20 @@ def main():
             asteroid.draw(screen)
         # Draw UI text for angle and speed
         font = pygame.font.SysFont(None, 24)
-        info_text = f"Angle: {math.degrees(angle):.0f}°, Speed: {speed}"
+        info_text = f"Angle: {math.degrees(angle):.0f}°"
         text_surf = font.render(info_text, True, (255, 255, 255))
         screen.blit(text_surf, (10, 10))
+
+        if asteroids:
+            asteroid_info = f"Asteroid name: {asteroids[-1].nasa_data['name']}"
+            asteroid_info_surf = font.render(asteroid_info, True, (255, 255, 255))
+            screen.blit(asteroid_info_surf, (10, 30))
+
+            asteroid_speed = asteroids[-1].nasa_data.get('close_approach_data', [])
+            if asteroid_speed:
+                speed_info = f"Speed (km/h): {round(float(asteroid_speed[0]['relative_velocity']['kilometers_per_hour']), 2)}"
+                speed_info_surf = font.render(speed_info, True, (255, 255, 255))
+                screen.blit(speed_info_surf, (10, 50))
 
         pygame.display.flip()
 
@@ -104,6 +115,7 @@ def main():
 
 def make_asteroid(launch_pos, angle, nasa_asteroid_data):
     # Close-approach data can be missing; guard it
+
     ca_list = nasa_asteroid_data.get('close_approach_data', [])
     if not ca_list:
         speed_kmh = 20000.0  # fallback (km/h), choose anything reasonable
@@ -117,7 +129,7 @@ def make_asteroid(launch_pos, angle, nasa_asteroid_data):
 
     # Scale real-world km/h to your game’s pixels-per-frame
     speed = speed_kmh * KMH_TO_PPF
-    print(speed)
+    print(f"{nasa_asteroid_data['name']} is moving at {speed} pixels/frame")
 
     vx = speed * math.cos(angle)
     vy = -speed * math.sin(angle)
