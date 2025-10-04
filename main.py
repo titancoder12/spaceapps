@@ -5,6 +5,7 @@ import physics
 from entities import CelestialBody
 from nasa_data import get_asteroid as load_nasa_data
 import json
+from screens import earth_collision
 
 
 # Screen dimensions
@@ -40,7 +41,10 @@ def main():
     angle = math.pi/2             # straight up
     speed = 5.0                   # initial launch speed
 
+    is_earth_collision = False
     running = True
+    updated_asteroid_speed = 0
+
     while running:
         clock.tick(60)  # Cap the frame rate
 
@@ -82,6 +86,8 @@ def main():
             dist = math.hypot(dx, dy)
             if dist < earth.radius + asteroid.radius:
                 asteroids.remove(asteroid)
+                print("IMPACT!!")
+                is_earth_collision = True
                 # (Optional: trigger impact animation here)
 
         # Remove asteroids that have escaped off-screen
@@ -97,14 +103,37 @@ def main():
         info_text = f"Angle: {math.degrees(angle):.0f}°"
         text_surf = font.render(info_text, True, (255, 255, 255))
         screen.blit(text_surf, (10, 10))
+        
+        if is_earth_collision:
+            #earth_collision(screen, asteroid.mass * 1000, updated_asteroid_speed)
+            #pygame.display.flip()
+            #pygame.time.delay(2000)
+            #is_earth_collision = False
+            pass
 
+        updated_asteroid_speed = 0
         if asteroids:
-            asteroid_info = f"Asteroid name: {asteroids[-1].nasa_data['name']}"
+            # Get speed in m/s (convert from pixels/frame to km/h, then to m/s)
+            last_asteroid = asteroids[-1]
+            # First, get the NASA km/h value if available
+            ca_list = last_asteroid.nasa_data.get('close_approach_data', [])
+            if ca_list:
+                try:
+                    speed_kmh = float(ca_list[0]['relative_velocity']['kilometers_per_hour'])
+                except (KeyError, ValueError, TypeError):
+                    speed_kmh = 0
+                else:
+                    updated_asteroid_speed = speed_kmh * 1000 / 3600  # km/h to m/s
+            else:
+                speed_kmh = 0
+                updated_asteroid_speed = speed_kmh * 1000 / 3600  # km/h to m/s
+            asteroid_info = f"Asteroid name: {last_asteroid.nasa_data['name']}"
             asteroid_info_surf = font.render(asteroid_info, True, (255, 255, 255))
             screen.blit(asteroid_info_surf, (10, 30))
 
             asteroid_speed = asteroids[-1].nasa_data.get('close_approach_data', [])
             if asteroid_speed:
+                
                 speed_info = f"Speed (km/h): {round(float(asteroid_speed[0]['relative_velocity']['kilometers_per_hour']), 2)}"
                 speed_info_surf = font.render(speed_info, True, (255, 255, 255))
                 screen.blit(speed_info_surf, (10, 50))
@@ -139,7 +168,7 @@ def make_asteroid(launch_pos, angle, nasa_asteroid_data):
         y=launch_pos[1],
         vx=vx,
         vy=vy,
-        mass=1,
+        mass=2,
         radius=5,
         color=(200, 200, 200),
         nasa_data=nasa_asteroid_data  # keep raw NASA dict
