@@ -8,7 +8,7 @@
 
 
 
-import requests
+import requests, json
 from datetime import date, timedelta
 
 def fetch_neo_feed(api_key, start_date, end_date):
@@ -22,13 +22,16 @@ def fetch_neo_feed(api_key, start_date, end_date):
     return data
 
 # Example usage:
-def get_data():
-    today = date.today().strftime("%Y-%m-%d")
-    future_date = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
-    feed_data = fetch_neo_feed('GlXGvGdXXtlWY4rPqR3O9iX8dH4uKseNmamKL1FK', today, future_date)
+def get_asteroid(start_date=None, end_date=None):
+    if start_date is None:
+        start_date = date.today().strftime("%Y-%m-%d")
+    if end_date is None:
+        end_date = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
+    feed_data = fetch_neo_feed('GlXGvGdXXtlWY4rPqR3O9iX8dH4uKseNmamKL1FK', start_date, end_date)
     #print(feed_data)  # For debugging
     # Now parse the JSON to extract asteroids
-    astroid_count = 0
+    
+    asteroids = []
     for date_str, ast_list in feed_data['near_earth_objects'].items():
         for ast in ast_list:
             name = ast['name']
@@ -36,9 +39,12 @@ def get_data():
             velocity = float(ast['close_approach_data'][0]['relative_velocity']['kilometers_per_hour'])
             miss_km = float(ast['close_approach_data'][0]['miss_distance']['kilometers'])
             # Use these values to create a game asteroid (scaling units as needed)
-            astroid_count += 1
-            print(f"Date: {date_str}, Name: {name}, Diameter (km): {diameter:.3f}, Velocity (km/h): {velocity:.1f}, Miss Distance (km): {miss_km:.1f}")
-    print(f"Total asteroids found: {astroid_count}")
+            asteroids.append(ast)
+            #print(f"Date: {date_str}, Name: {name}, Diameter (km): {diameter:.3f}, Velocity (km/h): {velocity:.1f}, Miss Distance (km): {miss_km:.1f}")
+    
+    return asteroids
 
 if __name__ == "__main__":
-    get_data()
+    asteroids = get_astroid()
+    print(json.dumps(asteroids, indent=4))
+    print(f"Total asteroids found: {len(asteroids)}")

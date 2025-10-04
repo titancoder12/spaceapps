@@ -3,7 +3,9 @@ import random
 import math
 import physics
 from entities import CelestialBody
-from data import dict
+from nasa_data import get_asteroid as load_nasa_data
+import json
+
 
 # Screen dimensions
 WIDTH, HEIGHT = 700, 700
@@ -14,6 +16,9 @@ NUM_ANTS = 5
 STOMP_RADIUS = 30
 
 def main():
+    nasa_asteroids = load_nasa_data()
+    print(json.dumps(nasa_asteroids, indent=4))
+    print(f"Total asteroids found: {len(nasa_asteroids)}")
     pygame.init()
     width, height = 800, 600
     screen = pygame.display.set_mode((width, height))

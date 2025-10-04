@@ -1,7 +1,7 @@
 import pygame
 
 class CelestialBody:
-    def __init__(self, x, y, vx, vy, mass, radius, color):
+    def __init__(self, x, y, vx, vy, mass, radius, color, nasa_data = None):
         # Position, velocity, mass, visual radius, and color
         self.x = x
         self.y = y
@@ -12,6 +12,7 @@ class CelestialBody:
         self.color = color
         # Store past positions for drawing an orbit trail
         self.orbit = []
+        self.nasa_data = nasa_data  # Store original NASA data if provided
 
     def draw(self, screen):
         # Draw the orbit trail as a line (if enough points)
