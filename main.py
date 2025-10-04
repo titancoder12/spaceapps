@@ -15,6 +15,9 @@ MAX_SPEED = 3
 NUM_ANTS = 5
 STOMP_RADIUS = 30
 
+# Convert real km/h to “pixels per frame” (tune this value to taste)
+KMH_TO_PPF = 0.00003
+
 def main():
     nasa_asteroids = load_nasa_data()
     print(json.dumps(nasa_asteroids, indent=4))
@@ -51,17 +54,18 @@ def main():
                     angle += math.radians(5)
                 if event.key == pygame.K_RIGHT:
                     angle -= math.radians(5)
-                if event.key == pygame.K_UP:
-                    speed += 1
-                if event.key == pygame.K_DOWN:
-                    speed = max(1, speed - 1)
+                # if event.key == pygame.K_UP:
+                #     speed += 1
+                # if event.key == pygame.K_DOWN:
+                #     speed = max(1, speed - 1)
                 # Fire an asteroid
                 if event.key == pygame.K_SPACE:
                     vx = speed * math.cos(angle)
                     vy = -speed * math.sin(angle)
-                    asteroid = CelestialBody(launch_pos[0], launch_pos[1],
-                                             vx=vx, vy=vy,
-                                             mass=1, radius=5, color=(200, 200, 200))
+                    # asteroid = CelestialBody(launch_pos[0], launch_pos[1],
+                    #                          vx=vx, vy=vy,
+                    #                          mass=1, radius=5, color=(200, 200, 200))
+                    asteroid =make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
                     asteroids.append(asteroid)
 
         # --- Physics Update ---
@@ -97,6 +101,38 @@ def main():
         pygame.display.flip()
 
     pygame.quit()
+
+def make_asteroid(launch_pos, angle, nasa_asteroid_data):
+    # Close-approach data can be missing; guard it
+    ca_list = nasa_asteroid_data.get('close_approach_data', [])
+    if not ca_list:
+        speed_kmh = 20000.0  # fallback (km/h), choose anything reasonable
+    else:
+        rel_vel = ca_list[0].get('relative_velocity', {})
+        # NASA gives strings here -> parse to float
+        try:
+            speed_kmh = float(rel_vel.get('kilometers_per_hour', 20000.0))
+        except (TypeError, ValueError):
+            speed_kmh = 20000.0
+
+    # Scale real-world km/h to your game’s pixels-per-frame
+    speed = speed_kmh * KMH_TO_PPF
+    print(speed)
+
+    vx = speed * math.cos(angle)
+    vy = -speed * math.sin(angle)
+
+    return CelestialBody(
+        x=launch_pos[0],
+        y=launch_pos[1],
+        vx=vx,
+        vy=vy,
+        mass=1,
+        radius=5,
+        color=(200, 200, 200),
+        nasa_data=nasa_asteroid_data  # keep raw NASA dict
+    )
+
 
 if __name__ == "__main__":
     main()

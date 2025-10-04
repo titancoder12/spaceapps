@@ -45,6 +45,6 @@ def get_asteroid(start_date=None, end_date=None):
     return asteroids
 
 if __name__ == "__main__":
-    asteroids = get_astroid()
-    print(json.dumps(asteroids, indent=4))
+    asteroids = get_asteroid()
+    print(json.dumps(asteroids[0], indent=4))
     print(f"Total asteroids found: {len(asteroids)}")
