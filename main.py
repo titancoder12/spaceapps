@@ -5,7 +5,7 @@ import pygame
 
 import physics
 from entities import CelestialBody
-from nasa_data import get_asteroid as load_nasa_data
+from data.nasa_data import get_asteroid as load_nasa_data
 from screens import earth_collision  # (currently unused but kept for future)
 from config import (
     M_PER_PX,
