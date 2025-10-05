@@ -22,12 +22,17 @@ def fetch_neo_feed(api_key, start_date, end_date):
     return data
 
 # Example usage:
-def get_asteroid(start_date=None, end_date=None):
+def get_asteroid(start_date=None, end_date=None, live=True):
     if start_date is None:
         start_date = date.today().strftime("%Y-%m-%d")
     if end_date is None:
         end_date = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
-    feed_data = fetch_neo_feed('GlXGvGdXXtlWY4rPqR3O9iX8dH4uKseNmamKL1FK', start_date, end_date)
+    if live:
+        feed_data = fetch_neo_feed('GlXGvGdXXtlWY4rPqR3O9iX8dH4uKseNmamKL1FK', start_date, end_date)
+    else:
+        with open('data/my_data.json') as f:
+            feed_data = json.load(f)
+
     #print(feed_data)  # For debugging
     # Now parse the JSON to extract asteroids
     

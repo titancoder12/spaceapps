@@ -146,7 +146,7 @@ class Game:
         self.font = pygame.font.SysFont(None, 24)
 
         # Data
-        self.nasa_asteroids = load_nasa_data()
+        self.nasa_asteroids = load_nasa_data(live=False) # set live=True to fetch from NASA API
         self.next_asteroid = random.choice(self.nasa_asteroids)
 
         # Primary bodies
