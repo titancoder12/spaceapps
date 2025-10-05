@@ -188,7 +188,7 @@ def main():
 
         # Draw UI text for angle and speed (existing)
         font = pygame.font.SysFont(None, 24)
-        info_text = f"Angle: {math.degrees(angle):.0f}°, Speed: {speed}"
+        info_text = f"Angle: {math.degrees(angle):.0f}°"
         screen.blit(font.render(info_text, True, (255, 255, 255)), (10, 10))
 
         # NEW: if we have last_effects, draw them centered on Earth
