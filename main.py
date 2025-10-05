@@ -65,6 +65,14 @@ def main():
     angle = math.pi/2             # straight up
     speed = 5.0                   # initial launch speed
 
+    # Launcher (cannon) state
+    launcher_x, launcher_y = 400, 580         # start near bottom-center
+    launcher_speed = 6                         # pixels per tick (tweak)
+    angle = math.pi/2                          # you already have this
+    speed = 5.0                                # you already have this
+    use_mouse_aim = True                       # optional: aim toward mouse
+
+
     is_earth_collision = False
     running = True
     updated_asteroid_speed = 0
@@ -86,6 +94,7 @@ def main():
 
         # --- Handle events (input) ---
         for event in pygame.event.get():
+            dx = dy = 0
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -94,8 +103,25 @@ def main():
                     angle += math.radians(5)
                 if event.key == pygame.K_d:
                     angle -= math.radians(5)
+                if event.key == pygame.K_LEFT:
+                    dx-=1
+                if event.key == pygame.K_RIGHT:
+                    dx+=1
+                if event.key == pygame.K_UP:
+                    dy-=1
+                if event.key == pygame.K_DOWN:
+                    dy+=1
+                if dx or dy:
+                    inv = 1.0 / math.hypot(dx, dy) if dx or dy else 0.0
+                    launcher_x += int(launcher_speed * dx * inv)
+                    launcher_y += int(launcher_speed * dy * inv)
+                # Keep launcher on-screen
+                launcher_x = max(0, min(width, launcher_x))
+                launcher_y = max(0, min(height, launcher_y))
                 if event.key == pygame.K_SPACE:
-                    asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
+                    #asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
+                    asteroid = make_asteroid([launcher_x, launcher_y], angle, random.choice(nasa_asteroids))
+
                     # attach physical params for consequence + deflection math
                     asteroid.diameter_m = scenario["diameter_m"]
                     asteroid.density = scenario["density"]
