@@ -77,33 +77,34 @@ def main():
                 if event.key == pygame.K_RIGHT:
                     angle -= math.radians(5)
                 if event.key == pygame.K_SPACE:
-                    vx = speed * math.cos(angle)
-                    vy = -speed * math.sin(angle)
                     asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
                     # attach physical params for consequence + deflection math
-                    asteroid.diameter_m = scenario["diameter_m"]
-                    asteroid.density = scenario["density"]
+                    #asteroid.diameter_m = scenario["diameter_m"]
+                    #asteroid.density = scenario["density"]
                     asteroids.append(asteroid)
+                    print(f"Launched {asteroid.nasa_data['name']}...")
 
-                    if event.key == pygame.K_d and asteroids:
-                        target = asteroids[-1]  # last fired
-                        # asteroid physical mass (from diameter & density)
-                        d = getattr(target, "diameter_m", DEFAULT_DIAMETER_M)
-                        rho = getattr(target, "density", DEFAULT_DENSITY)
-                        m_ast = mass_from_diam(d, rho)
+                if event.key == pygame.K_d and asteroids:
+                    target = asteroids[-1]  # last fired
+                    print(f"Deflecting {target.nasa_data['name']}...")
+                    # asteroid physical mass (from diameter & density)
+                    d = getattr(target, "diameter_m", DEFAULT_DIAMETER_M)
+                    rho = getattr(target, "density", DEFAULT_DENSITY)
+                    m_ast = mass_from_diam(d, rho)
 
-                        dv = delta_v_kinetic(
-                            m_impactor=DEFAULT_IMPACTOR_MASS,
-                            v_impactor_mps=DEFAULT_IMPACTOR_SPEED,
-                            m_asteroid=m_ast,
-                            beta=DEFAULT_BETA
-                        )
+                    dv = delta_v_kinetic(
+                        m_impactor=DEFAULT_IMPACTOR_MASS,
+                        v_impactor_mps=DEFAULT_IMPACTOR_SPEED,
+                        m_asteroid=m_ast,
+                        beta=DEFAULT_BETA
+                    )
 
-                        # choose a direction: perpendicular to current velocity to maximize miss distance
-                        dir_rad = math.atan2(target.vy, target.vx) + math.pi/2
-                        # convert dv (m/s) to px/tick
-                        dv_px_per_tick = dv / (M_PER_PX / SECONDS_PER_TICK)
-                        target.vx, target.vy = add_delta_v(target.vx, target.vy, dv_px_per_tick, dir_rad)
+                    # choose a direction: perpendicular to current velocity to maximize miss distance
+                    dir_rad = math.atan2(target.vy, target.vx) + math.pi/2
+                    # convert dv (m/s) to px/tick
+                    dv_px_per_tick = dv / (M_PER_PX / SECONDS_PER_TICK)
+                    target.vx, target.vy = add_delta_v(target.vx, target.vy, dv_px_per_tick, dir_rad)
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_n and sample_neo:
                 neo = sample_neo()
                 scenario["diameter_m"] = neo["diameter_m"]
