@@ -78,6 +78,7 @@ def main():
 
     # Last computed effects (drawn every frame if present)
     last_effects = None
+    effects_expire_ms = 0
 
 
     while running:
@@ -100,6 +101,8 @@ def main():
                     asteroid.density = scenario["density"]
                     asteroids.append(asteroid)
                     print(f"Launched {asteroid.nasa_data['name']}...")
+                    last_effects = None
+                    effects_expire_ms = 0
 
                 if event.key == pygame.K_d and asteroids:
                     target = asteroids[-1]  # last fired
@@ -157,6 +160,7 @@ def main():
                     v_mps=v_mps,
                     angle_deg=scenario["angle_deg"]
                 )
+                effects_expire_ms = pygame.time.get_ticks() + 2500  # show for 2.5s
 
                 asteroids.remove(asteroid)
                 # (Optional: trigger an explosion anim here)
@@ -192,13 +196,15 @@ def main():
         screen.blit(font.render(info_text, True, (255, 255, 255)), (10, 10))
 
         # NEW: if we have last_effects, draw them centered on Earth
-        if last_effects:
+        now = pygame.time.get_ticks()
+        if last_effects and now < effects_expire_ms:
             draw_effects(screen, (earth.x, earth.y), last_effects)
             # side info
             y = 34
             for line in info_lines(last_effects):
                 screen.blit(font.render(line, True, (200, 220, 255)), (10, y)); y += 18
-
+        else:
+            last_effects = None
         pygame.display.flip()
 
         # Draw UI text for angle and speed
