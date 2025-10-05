@@ -90,9 +90,9 @@ def main():
                 running = False
             if event.type == pygame.KEYDOWN:
                 # Adjust launch angle/speed with arrow keys
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_a:
                     angle += math.radians(5)
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_d:
                     angle -= math.radians(5)
                 if event.key == pygame.K_SPACE:
                     asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
