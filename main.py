@@ -230,7 +230,7 @@ def main():
         if last_effects and now < effects_expire_ms:
             draw_effects(screen, (earth.x, earth.y), last_effects)
             # side info
-            y = 34
+            y = 84
             for line in info_lines(last_effects):
                 screen.blit(font.render(line, True, (200, 220, 255)), (10, y)); y += 18
         else:
