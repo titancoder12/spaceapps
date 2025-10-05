@@ -88,6 +88,7 @@ def main():
     last_effects = None
     effects_expire_ms = 0
 
+    next_asteroid =  random.choice(nasa_asteroids)
 
     while running:
         clock.tick(60)  # Cap the frame rate
@@ -120,8 +121,9 @@ def main():
                 launcher_y = max(0, min(height, launcher_y))
                 if event.key == pygame.K_SPACE:
                     #asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
-                    asteroid = make_asteroid([launcher_x, launcher_y], angle, random.choice(nasa_asteroids))
-
+                    asteroid = make_asteroid([launcher_x, launcher_y], angle, next_asteroid)
+                    next_asteroid =  random.choice(nasa_asteroids)
+                    print(json.dumps(next_asteroid, indent=4))
                     # attach physical params for consequence + deflection math
                     asteroid.diameter_m = scenario["diameter_m"]
                     asteroid.density = scenario["density"]
@@ -218,9 +220,11 @@ def main():
 
         # Draw UI text for angle and speed (existing)
         font = pygame.font.SysFont(None, 24)
+        next_astroid_name = next_asteroid['name']
         info_text = f"Angle: {math.degrees(angle):.0f}°"
-        screen.blit(font.render(info_text, True, (255, 255, 255)), (10, 10))
-
+        screen.blit(font.render(info_text, True, (255, 255, 255)), (10, 50))
+        screen.blit(font.render("Next Asteroid: "+next_astroid_name, True, (255, 255, 255)), (10, 10))
+#
         # NEW: if we have last_effects, draw them centered on Earth
         now = pygame.time.get_ticks()
         if last_effects and now < effects_expire_ms:
