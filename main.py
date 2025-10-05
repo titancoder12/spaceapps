@@ -16,7 +16,7 @@ try:
     from data.neows import sample_neo
 except Exception:
     sample_neo = None
-
+from orbits import spawn_circular_orbit
 # Screen dimensions
 WIDTH, HEIGHT = 700, 700
 
@@ -41,6 +41,23 @@ def main():
     earth = CelestialBody(400, 300, vx=0, vy=0,
                           mass=10000, radius=20, color=(0, 100, 255))
 
+    # Tunable moon parameters (pixels and masses are in your game-units)
+    MOON_DISTANCE_PX = 120          # distance from Earth center (try 100–160)
+    MOON_MASS        = 100          # much smaller than Earth so Earth barely moves
+    MOON_RADIUS_PX   = 8            # for visuals only
+
+    moon = spawn_circular_orbit(
+        anchor=earth,
+        r_px=MOON_DISTANCE_PX,
+        orbiter_mass=MOON_MASS,
+        orbiter_radius_px=MOON_RADIUS_PX,
+        color=(180, 180, 255),      # pale blue-gray
+        G=0.1,                      # must match physics.G
+        clockwise=True
+    )
+
+    # Keep a list of permanent bodies (Earth + Moon)
+    primaries = [earth, moon]
     # List to hold all asteroids
     asteroids = []
     # Launch parameters: initial position and aim (angle/speed)
@@ -79,8 +96,8 @@ def main():
                 if event.key == pygame.K_SPACE:
                     asteroid = make_asteroid(launch_pos, angle, random.choice(nasa_asteroids))
                     # attach physical params for consequence + deflection math
-                    #asteroid.diameter_m = scenario["diameter_m"]
-                    #asteroid.density = scenario["density"]
+                    asteroid.diameter_m = scenario["diameter_m"]
+                    asteroid.density = scenario["density"]
                     asteroids.append(asteroid)
                     print(f"Launched {asteroid.nasa_data['name']}...")
 
@@ -116,7 +133,8 @@ def main():
 
         # --- Physics Update ---
         # Combine Earth and all asteroids into one list for gravity
-        bodies = [earth] + asteroids
+        #bodies = [earth] + asteroids
+        bodies = primaries + asteroids
         # Advance physics by one time unit
         physics.update_bodies(bodies, dt=1)
 
@@ -142,6 +160,18 @@ def main():
 
                 asteroids.remove(asteroid)
                 # (Optional: trigger an explosion anim here)
+                continue
+            
+            # asteroid–Moon
+            dxm = asteroid.x - moon.x
+            dym = asteroid.y - moon.y
+            if (dxm*dxm + dym*dym) ** 0.5 < moon.radius + asteroid.radius:
+                # Option A: treat as a hit and remove it
+                # Option B (fun): ricochet or fragment. For now, remove.
+                asteroids.remove(asteroid)
+                # (Optional) Start a small impact animation on the Moon here.
+                continue
+            
 
 
         # Remove asteroids that have escaped off-screen
@@ -150,7 +180,9 @@ def main():
         # --- Drawing ---
         # --- Drawing ---
         screen.fill((0, 0, 0))
-        earth.draw(screen)
+        #earth.draw(screen)
+        for body in primaries:
+            body.draw(screen)
         for asteroid in asteroids:
             asteroid.draw(screen)
 
@@ -247,6 +279,9 @@ def make_asteroid(launch_pos, angle, nasa_asteroid_data):
         color=(200, 200, 200),
         nasa_data=nasa_asteroid_data  # keep raw NASA dict
     )
+
+
+
 
 
 if __name__ == "__main__":
