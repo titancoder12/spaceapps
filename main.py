@@ -276,6 +276,17 @@ def main():
                 # Place below asteroid name, aligned right
                 screen.blit(speed_info_surf, (width - speed_info_surf.get_width() - 10, 100 + asteroid_info_surf.get_height() + 5))
 
+        # --- Draw launcher ---
+        # base
+        pygame.draw.circle(screen, (180,180,180), (int(launcher_x), int(launcher_y)), 8)
+
+        # barrel line
+        barrel_len = 40
+        tip_x = int(launcher_x + barrel_len * math.cos(angle))
+        tip_y = int(launcher_y - barrel_len * math.sin(angle))
+        pygame.draw.line(screen, (255,255,255), (int(launcher_x), int(launcher_y)), (tip_x, tip_y), 2)
+
+
         pygame.display.flip()
 
     pygame.quit()
