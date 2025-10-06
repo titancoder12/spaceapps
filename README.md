@@ -13,6 +13,7 @@ Players launch asteroids toward Earth and observe their realistic motion under N
 
 When an asteroid impacts Earth, the game calculates kinetic energy, crater size, and blast radii. Players can also apply kinetic deflection— inspired by NASA’s DART mission— to alter an asteroid’s path and prevent catastrophe.
 
+🎮 Play the live version here: https://titancoder.itch.io/meteor-madness
 ---
 
 ## Challenge Theme
