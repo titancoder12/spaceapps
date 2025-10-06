@@ -8,7 +8,7 @@
 
 
 
-import requests, json
+import json
 from datetime import date, timedelta
 
 def fetch_neo_feed(api_key, start_date, end_date):
@@ -18,6 +18,7 @@ def fetch_neo_feed(api_key, start_date, end_date):
         'end_date': end_date,
         'api_key': api_key
     }
+    import requests
     data = requests.get(url, params=params).json()
     return data
 
@@ -28,6 +29,7 @@ def get_asteroid(start_date=None, end_date=None, live=True):
     if end_date is None:
         end_date = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
     if live:
+        import requests
         feed_data = fetch_neo_feed('GlXGvGdXXtlWY4rPqR3O9iX8dH4uKseNmamKL1FK', start_date, end_date)
     else:
         with open('data/my_data.json') as f:

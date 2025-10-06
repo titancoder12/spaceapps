@@ -1,3 +1,11 @@
+# Pygbag-ready main.py: identical gameplay, async loop & web-safe tweaks.
+
+try:
+    import asyncio
+except Exception:
+    # Fallback for pygbag runtime
+    import pygbag.aio as asyncio
+
 import math
 import json
 import random
@@ -27,6 +35,7 @@ except Exception:
     sample_neo = None
 
 from orbits import spawn_circular_orbit
+
 
 # =============================================================================
 # Constants / Config
@@ -137,6 +146,12 @@ class Game:
 
     def __init__(self) -> None:
         pygame.init()
+        # Audio not supported in pygbag; ensure mixer is off (harmless on desktop)
+        try:
+            pygame.mixer.quit()
+        except Exception:
+            pass
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Asteroid Gravity Game")
         self.clock = pygame.time.Clock()
@@ -146,7 +161,8 @@ class Game:
         self.font = pygame.font.SysFont(None, 24)
 
         # Data
-        self.nasa_asteroids = load_nasa_data(live=False) # set live=True to fetch from NASA API
+        # Set live=True to fetch from NASA API (requires network; avoid for offline/web bundle)
+        self.nasa_asteroids = load_nasa_data(live=False)
         self.next_asteroid = random.choice(self.nasa_asteroids)
 
         # Primary bodies
@@ -172,7 +188,7 @@ class Game:
         self.launcher_x = LAUNCHER_INIT_X
         self.launcher_y = LAUNCHER_INIT_Y
         self.launch_angle = math.pi / 2  # straight up
-        self.use_mouse_aim = True        # currently unused in code path; reserved for future
+        self.use_mouse_aim = True        # reserved for future
 
         # Scenario (physical parameters for impact calculations)
         self.scenario = {
@@ -241,8 +257,8 @@ class Game:
             self.scenario["diameter_m"] = neo["diameter_m"]
             self.scenario["density"] = neo["density_kgm3"]
             self.scenario["angle_deg"] = neo["angle_deg"]
-            # Optionally, adjust any in-game speed scalar if desired:
-            # (neo["speed_mps"] * SECONDS_PER_TICK) / M_PER_PX  # px/tick
+            # If you want to reflect neo speed in-game, convert m/s -> px/tick:
+            # v_px_per_tick = (neo["speed_mps"] * SECONDS_PER_TICK) / M_PER_PX
 
     # -------------------------------------------------------------------------
     # Simulation
@@ -429,15 +445,18 @@ class Game:
         )
 
     # -------------------------------------------------------------------------
-    # Main loop
+    # Main loop (async for pygbag)
     # -------------------------------------------------------------------------
-    def run(self) -> None:
+    async def run(self) -> None:
         while self.running:
             self.clock.tick(FPS)
             self.handle_events()
             self.update_physics()
             self.handle_collisions_and_culling()
             self.draw()
+
+            # CRITICAL for browser (yield to JS/WASM loop)
+            await asyncio.sleep(0)
 
         pygame.quit()
 
@@ -446,5 +465,9 @@ class Game:
 # Entrypoint
 # =============================================================================
 
+async def main():
+    game = Game()
+    await game.run()
+
 if __name__ == "__main__":
-    Game().run()
+    asyncio.run(main())
