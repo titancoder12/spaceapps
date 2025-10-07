@@ -1,19 +1,5 @@
-altgraph==0.17.4
-brotlicffi @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_b5py2dr5ag/croot/brotlicffi_1736182482518/work
-certifi @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_barck9k8fe/croot/certifi_1754570651396/work/certifi
-cffi @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_e4xd9yd9i2/croot/cffi_1736182819442/work
-charset-normalizer @ file:///croot/charset-normalizer_1721748349566/work
-idna @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/idna_1728585920859/work
-macholib==1.16.3
-numpy==2.3.3
-packaging==25.0
-pycparser @ file:///opt/miniconda3/conda-bld/pycparser_1757496048647/work
-pygame==2.6.1
-pygbag==0.9.2
-pyinstaller==6.16.0
-pyinstaller-hooks-contrib==2025.9
-PySocks @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/pysocks_1728586068722/work
-requests @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_ef59rwwti1/croot/requests_1756709671417/work
-setuptools==78.1.1
-urllib3 @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_95v32ztwo_/croot/urllib3_1750775480393/work
-wheel==0.45.1
+pygame>=2.6.1
+requests>=2.32
+numpy>=1.26
+# optional for browser builds; remove if not needed by players
+pygbag>=0.9
