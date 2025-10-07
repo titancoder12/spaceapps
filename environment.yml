@@ -1,8 +1,11 @@
-name: daydream
+name: asteroid_env
 channels:
-  - defaults
+  - conda-forge
 dependencies:
+  - python=3.12
+  - pygame
+  - numpy
   - pip
-  - python=3.13.7
-  - requests
-prefix: /opt/miniconda3/envs/daydream
+  - pip:
+      - requests
+      - pygbag
