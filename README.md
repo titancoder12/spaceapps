@@ -81,11 +81,7 @@ conda install pip
 pip install -r requirements.txt
 ```
 
-If you want to rebuild the same environment later:
 
-```bash
-conda env export --from-history > environment.yml
-```
 
 ---
 
@@ -114,6 +110,12 @@ python main.py
 ---
 
 ### 4. Run in your browser with PyGBag
+
+To run in a borwser:
+```
+pygbag .
+```
+Then open you browser and go to http://localhost:8000/
 
 To build a web version:
 
