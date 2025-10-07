@@ -111,16 +111,15 @@ python main.py
 
 ### 4. Run in your browser with PyGBag
 
-To run in a borwser:
+To run in a browser:
 ```
 pygbag .
 ```
-Then open you browser and go to http://localhost:8000/
+Then open your browser and go to http://localhost:8000/
 
 To build a web version:
 
 ```bash
-pip install pygbag
 pygbag --build .
 ```
 
