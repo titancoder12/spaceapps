@@ -59,9 +59,8 @@ You can run the game locally using either pip or conda.
 ### 1. Clone the repository
 
 ```bash
-mkdir spaceapps
-cd spaceapps
 git clone https://github.com/titancoder12/spaceapps.git
+cd spaceapps
 ```
 
 ---
