@@ -1,0 +1,8 @@
+name: daydream
+channels:
+  - defaults
+dependencies:
+  - pip
+  - python=3.13.7
+  - requests
+prefix: /opt/miniconda3/envs/daydream
